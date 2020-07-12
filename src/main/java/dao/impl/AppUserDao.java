@@ -7,16 +7,16 @@ import model.AppUser;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class AppUserDao extends AbstractDao implements UserDao {
 
 
     @Override
-    public List<AppUser> getAll() {
+    public HashSet<AppUser> getAll() {
         TypedQuery<AppUser> selectAllQuery = entityManager.createQuery("select u from AppUser u", AppUser.class);
-        return selectAllQuery.getResultList();
+        return new HashSet<>(selectAllQuery.getResultList());
     }
 
     @Override
@@ -42,9 +42,9 @@ public class AppUserDao extends AbstractDao implements UserDao {
     }
 
     @Override
-    public List<AppUser> getUsersByName(String name) {
+    public HashSet<AppUser> getUsersByName(String name) {
         TypedQuery<AppUser> selectByNameQuery = entityManager.createQuery("select u from AppUser u where u.name = :name", AppUser.class);
-        return selectByNameQuery.setParameter("name", name).getResultList();
+        return new HashSet<>(selectByNameQuery.setParameter("name", name).getResultList());
     }
 
     @Override
@@ -61,25 +61,29 @@ public class AppUserDao extends AbstractDao implements UserDao {
     }
 
     @Override
-    public List<AppUser> getFollowedUsers(String login) {
+    public HashSet<AppUser> getFollowedUsers(String login) {
         AppUser userByLogin = getUserByLogin(login);
-        return new ArrayList<>(userByLogin.getFollowedByUser());
+        return new HashSet<>(userByLogin.getFollowedByUser());
     }
 
     @Override
-    public List<AppUser> getNotFollowedUsers(String login) {
+    public HashSet<AppUser> getNotFollowedUsers(String login) {
         Query query = entityManager.createQuery("select u from AppUser u where u.login != :login");
         query.setParameter("login", login);
         List<AppUser> users = query.getResultList();
         users.removeAll(getFollowedUsers(login));
-        return users;
+        return new HashSet<>(users);
     }
 
 
     @Override
-    public List<AppUser> getFollowers(String login) {
+    public HashSet<AppUser> getFollowers(String login) {
         AppUser userByLogin = getUserByLogin(login);
-        return new ArrayList<>(userByLogin.getFollowers());
+        Query query = entityManager
+                .createQuery("select followers from AppUser u where u.id = :userId");
+        Long id = userByLogin.getId();
+        return new HashSet<AppUser>(query.setParameter("userId", id).getResultList());
+
     }
 
     @Override

@@ -2,11 +2,11 @@ package dao;
 
 import model.AppUser;
 
-import java.util.List;
+import java.util.HashSet;
 
 public interface UserDao {
 
-    List<AppUser> getAll();
+    HashSet<AppUser> getAll();
 
     void saveUser(AppUser user);
 
@@ -16,15 +16,15 @@ public interface UserDao {
 
     AppUser getUserByLogin(String login);
 
-    List<AppUser> getUsersByName(String name);
+    HashSet<AppUser> getUsersByName(String name);
 
     boolean isUserValid(String login, String password);
 
-    List<AppUser> getFollowedUsers(String login);
+    HashSet<AppUser> getFollowedUsers(String login);
 
-    List<AppUser> getNotFollowedUsers(String login);
+    HashSet<AppUser> getNotFollowedUsers(String login);
 
-    List<AppUser> getFollowers(String login);
+    HashSet<AppUser> getFollowers(String login);
 
     void follow(String currentUserLogin, String userLoginToFollow);
 
