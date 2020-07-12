@@ -7,6 +7,7 @@ import model.AppUser;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AppUserDao extends AbstractDao implements UserDao {
@@ -50,7 +51,7 @@ public class AppUserDao extends AbstractDao implements UserDao {
     public boolean isUserValid(String login, String password) {
         try {
             AppUser userByLogin = getUserByLogin(login);
-            if(userByLogin.getPassword().equals(password)) {
+            if (userByLogin.getPassword().equals(password)) {
                 return true;
             }
             return false;
@@ -61,21 +62,41 @@ public class AppUserDao extends AbstractDao implements UserDao {
 
     @Override
     public List<AppUser> getFollowedUsers(String login) {
-        return null;
+        AppUser userByLogin = getUserByLogin(login);
+        return new ArrayList<>(userByLogin.getFollowedByUser());
     }
 
     @Override
+    public List<AppUser> getNotFollowedUsers(String login) {
+        Query query = entityManager.createQuery("select u from AppUser u where u.login != :login");
+        query.setParameter("login", login);
+        List<AppUser> users = query.getResultList();
+        users.removeAll(getFollowedUsers(login));
+        return users;
+    }
+
+
+    @Override
     public List<AppUser> getFollowers(String login) {
-        return null;
+        AppUser userByLogin = getUserByLogin(login);
+        return new ArrayList<>(userByLogin.getFollowers());
     }
 
     @Override
     public void follow(String currentUserLogin, String userLoginToFollow) {
-
+        if (!currentUserLogin.equals(userLoginToFollow)) {
+            AppUser currentUser = getUserByLogin(currentUserLogin);
+            AppUser userToFollow = getUserByLogin(userLoginToFollow);
+            currentUser.getFollowedByUser().add(userToFollow);
+            saveUser(currentUser);
+        }
     }
 
     @Override
     public void stopFollowing(String currentUserLogin, String userLoginToStopFollow) {
-
+        AppUser currentUser = getUserByLogin(currentUserLogin);
+        AppUser userToStopFollow = getUserByLogin(userLoginToStopFollow);
+        currentUser.getFollowedByUser().remove(userToStopFollow);
+        saveUser(currentUser);
     }
 }

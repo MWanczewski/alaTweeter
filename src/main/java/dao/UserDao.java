@@ -22,6 +22,8 @@ public interface UserDao {
 
     List<AppUser> getFollowedUsers(String login);
 
+    List<AppUser> getNotFollowedUsers(String login);
+
     List<AppUser> getFollowers(String login);
 
     void follow(String currentUserLogin, String userLoginToFollow);
