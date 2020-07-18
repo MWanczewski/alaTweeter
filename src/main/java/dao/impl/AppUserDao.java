@@ -48,19 +48,6 @@ public class AppUserDao extends AbstractDao implements UserDao {
     }
 
     @Override
-    public boolean isUserValid(String login, String password) {
-        try {
-            AppUser userByLogin = getUserByLogin(login);
-            if (userByLogin.getPassword().equals(password)) {
-                return true;
-            }
-            return false;
-        } catch (NoResultException e) {
-            return false;
-        }
-    }
-
-    @Override
     public HashSet<AppUser> getFollowedUsers(String login) {
         AppUser userByLogin = getUserByLogin(login);
         return new HashSet<>(userByLogin.getFollowedByUser());
