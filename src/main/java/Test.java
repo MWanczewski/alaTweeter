@@ -36,5 +36,13 @@ public class Test {
 
         System.out.println(followers1.size());
         userDao.saveUser(makaron1);
+        returnTest();
+    }
+    public static void returnTest() {
+        if(true) {
+            System.out.println("IN if");
+            return;
+        }
+        System.out.println("outside");
     }
 }
