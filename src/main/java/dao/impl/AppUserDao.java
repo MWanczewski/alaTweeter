@@ -72,7 +72,6 @@ public class AppUserDao extends AbstractDao implements UserDao {
                 .createQuery("select followers from AppUser u where u.id = :userId");
         Long id = userByLogin.getId();
         return new HashSet<AppUser>(query.setParameter("userId", id).getResultList());
-
     }
 
     @Override

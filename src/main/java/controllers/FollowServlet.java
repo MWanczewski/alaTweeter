@@ -30,11 +30,6 @@ public class FollowServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String userLoginFromSession = ServletsUtils.getUserLoginFromSession(req);
-        if(null == userLoginFromSession) {
-            req.getRequestDispatcher("/login.jsp").forward(req, resp);
-            return;
-        }
-
         String userLoginToFollow = req.getParameter(USER_LOGIN_TO_FOLLOW);
         service.follow(userLoginFromSession, userLoginToFollow);
         req.getRequestDispatcher("users").forward(req, resp);

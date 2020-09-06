@@ -1,6 +1,7 @@
 package model;
 
 
+import org.hibernate.annotations.CreationTimestamp;
 import services.impl.UserManagementServiceImpl;
 
 import javax.persistence.*;
@@ -23,14 +24,15 @@ public class AppUser {
     private String password;
     private String email;
     @Column(name = "date_of_registration")
+    @CreationTimestamp
     private Date dateOfRegistration;
 
 
-    @ManyToMany(mappedBy = "followedByUser")
+    @ManyToMany(mappedBy = "followedByUser", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Set<AppUser> followers = new HashSet<>();
 
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinTable(name = "follower_followed",
             joinColumns = {@JoinColumn(name = "follower_id")},
             inverseJoinColumns = {@JoinColumn(name = "followed_id")})

@@ -1,7 +1,8 @@
 package controllers;
 
-import services.UserManagementService;
-import services.impl.UserManagementServiceImpl;
+
+import services.TweetManagementService;
+import services.impl.TweetManagementServiceImpl;
 import utils.ServletsUtils;
 
 import javax.servlet.ServletException;
@@ -11,15 +12,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static utils.ServletsUtils.USER_LOGIN_TO_UNFOLLOW;
+import static utils.ServletsUtils.TWEET_MESSAGE_PARAM;
 
-@WebServlet(name = "UnFollowServlet", value = "/unfollow")
-public class UnFollowServlet extends HttpServlet {
-    private UserManagementService service;
+@WebServlet(name = "AddTweetServlet", value = "/addMessage")
+public class AddTweetServlet extends HttpServlet {
+    private TweetManagementService service;
 
     @Override
     public void init() throws ServletException {
-        service = new UserManagementServiceImpl();
+       service = new TweetManagementServiceImpl();
     }
 
     @Override
@@ -30,10 +31,12 @@ public class UnFollowServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String userLoginFromSession = ServletsUtils.getUserLoginFromSession(req);
-        String userLoginToUnFollow = req.getParameter(USER_LOGIN_TO_UNFOLLOW);
-        service.stopFollowing(userLoginFromSession, userLoginToUnFollow);
-        req.getRequestDispatcher("users").forward(req, resp);
+        String message = req.getParameter(TWEET_MESSAGE_PARAM);
+        if(message == null || message.isEmpty()) {
+            req.getRequestDispatcher("messages").forward(req, resp);
+            return;
+        }
+        service.addTweet(userLoginFromSession, message);
+        req.getRequestDispatcher("messages").forward(req, resp);
     }
-
-
 }

@@ -30,10 +30,6 @@ public class UsersServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String userLoginFromSession = ServletsUtils.getUserLoginFromSession(req);
-        if(null == userLoginFromSession) {
-            req.getRequestDispatcher("/login.jsp").forward(req, resp);
-            return;
-        }
         req.setAttribute(NOT_FOLLOWED_USERS, service.getNotFollowedUsers(userLoginFromSession));
         req.setAttribute(FOLLOWED_USERS, service.getFollowedUsers(userLoginFromSession));
         req.getRequestDispatcher("/users.jsp").forward(req, resp);
